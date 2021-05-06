@@ -1,23 +1,58 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Table } from "reactstrap";
 
 function App() {
+  const [initLists, setInitLists] = useState([]);
+  const [showLists, setShowLists] = useState([]);
+
+  useEffect(() => {
+    const getList = async () => {
+      const res = await axios.get("https://api.publicapis.org/categories");
+      const data = await res.data;
+      setInitLists(data);
+      setShowLists(data);
+    };
+
+    getList();
+  }, []);
+
+  const handleFilterChange = (e) => {
+    const value = e.target.value;
+    const finded = initLists.filter((list) =>
+      list.toLowerCase().includes(value)
+    );
+    setShowLists(finded);
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h3>Filter categories</h3>
+      <input
+        type="text"
+        placeholder="typing categories"
+        className="input-text"
+        onChange={handleFilterChange}
+      />
+      <Table striped>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Categories</th>
+          </tr>
+        </thead>
+        <tbody>
+          {showLists.length > 0 &&
+            showLists.map((list, index) => {
+              return (
+                <tr key={index + 1}>
+                  <th scope="row">{index + 1}</th>
+                  <td>{list}</td>
+                </tr>
+              );
+            })}
+        </tbody>
+      </Table>
     </div>
   );
 }
