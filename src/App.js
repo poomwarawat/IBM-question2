@@ -19,7 +19,8 @@ function App() {
   }, []);
 
   const handleFilterChange = (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
+    value = value.toLowerCase();
     const finded = initLists.filter((list) =>
       list.toLowerCase().includes(value)
     );
